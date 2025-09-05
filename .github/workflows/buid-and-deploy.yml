@@ -47,3 +47,4 @@ jobs:
         with:
           executable-name: mcp-wos-gibtsn-heid
           target: ${{ matrix.platform.target }}
+          changes-file: "CHANGELOG.md"
