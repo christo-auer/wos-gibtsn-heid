@@ -1,8 +1,18 @@
 use clap::ValueEnum;
+use once_cell::sync::Lazy;
 use rmcp::schemars;
+use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
 
 #[derive(
-    Copy, Clone, PartialEq, serde::Serialize, serde::Deserialize, schemars::JsonSchema, ValueEnum,
+    Copy,
+    Clone,
+    PartialEq,
+    serde::Serialize,
+    serde::Deserialize,
+    schemars::JsonSchema,
+    ValueEnum,
+    EnumIter,
 )]
 pub enum Location {
     #[schemars(description = "Hochschule Landshut Mensa")]
@@ -80,3 +90,40 @@ pub fn location_to_id(location: &Location) -> String {
         .trim_matches('"')
         .to_string()
 }
+
+fn location_to_description(location: &Location) -> String {
+    use Location::*;
+    match location {
+        HSLaMensa => "Hochschule Landshut Mensa",
+        HSLaCafeteria => "Hochschule Landshut Cafeteria",
+        UniRMensa => "Universität Regensburg Mensa",
+        UniRGaestesaal => "Universität Regensburg Mensa - Gästesaal",
+        UniRCafeteriaPT => "Universität Regensburg Cafeteria PT",
+        UniRCafeteriaChemie => "Universität Regensburg Cafeteria Chemie",
+        UniRCafeteriaSammel => "Universität Regensburg Cafeteria Sammelgebäude",
+        UniRCafeteriaSport => "Universität Regensburg Cafeteria Sport",
+        OthRMensa => "OTH Regensburg Mensa Seybothstraße (Mittags)",
+        OthRMensaAbend => "OTH Regensburg Mensa Seybothstraße (Abends)",
+        OthRMensaPruefening => "OTH Regensburg Mensa Prüfeningerstraße (Mittags)",
+        UniPMensa => "Universität Passau Mensa",
+        UniPCafeteriaNikolakloster => "Universität Passau Cafeteria Nikolakloster",
+        ThDegMensa => "TH Deggendorf Mensa",
+        TcCham => "TH Deggendorf-Cham",
+        EcPfarrkirchen => "European Campus Pfarrkirchen",
+        TumStraubing => "TUM Campus Straubing",
+    }
+    .to_string()
+}
+
+pub static LOCATIONS_STRING: Lazy<String> = Lazy::new(|| {
+    Location::iter()
+        .map(|loc| {
+            format!(
+                "{}: {}",
+                location_to_id(&loc),
+                location_to_description(&loc)
+            )
+        })
+        .reduce(|accum, next| format!("{accum}\n{next}"))
+        .unwrap()
+});

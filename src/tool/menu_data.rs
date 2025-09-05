@@ -1,65 +1,94 @@
+use indexmap::IndexMap;
+use once_cell::sync::Lazy;
 use rmcp::schemars;
 
-pub const INGREDIENTS: &str = r#"
-      1: mit Farbstoff
-      2: mit Konservierungsstoff
-      3: mit Antioxidationsmittel
-      4: mit Geschmacksverstärker
-      5: geschwefelt
-      6: geschwärzt
-      7: gewachst
-      8: mit Phosphat
-      9: mit Süssungsmittel Saccharin
-      10: mit Süssungsmittel Aspartam, enth. Phenylalaninquelle
-      11: mit Süssungsmittel Cyclamat
-      12: mit Süssungsmittel Acesulfam 	13 chininhaltig
-      14: coffeinhaltig
-      16: enthält Sulfite
-      17: enthält Phenylalanin
-"#;
-pub const ALLERGENS: &str = r#"
-      AA: Weizengluten
-      AB: Roggengluten
-      AC: Gerstengluten
-      AD: Hafergluten
-      AE: Dinkelgluten
-      AF: Kamutgluten
-      B: Krebstiere
-      C: Eier
-      D: Fisch
-      E: Erdnüsse 	
-      F: Soja
-      G: Milch und Milchprodukte
-      HA: Mandel
-      HB: Haselnuss
-      HC: Walnuss
-      HD: Cashew
-      HE: Pecannuss
-      HF: Paranuss
-      HG: Pistazie
-      HH: Macadamianuss 	
-      HI: Queenslandnuss
-      I: Sellerie
-      J: Senf
-      K: Sesamsamen
-      L: Schwefeldioxid und Sulfite
-      M: Lupinen
-      N: Weichtiere
-      O: Nitrat
-      P: Nitritpökelsalz 
-"#;
+fn abbreviation_table_to_string(abbreviations: &IndexMap<&str, &str>) -> String {
+    abbreviations
+        .iter()
+        .map(|(abbr, desc)| format!("{abbr}: {desc}"))
+        .reduce(|acc, item| format!("{acc}\n{item}"))
+        .unwrap()
+}
 
-pub const INDICATORS: &str = r#"
-      V: vegetarisch
-      VG: vegan
-      S: Schwein
-      R: Rind
-      G: Geflügel
-      F: Fisch
-      A: Alkohol
-      B: bio
-      PHD: Klimateller (planetary health diet)
-"#;
+pub static INGREDIENTS: Lazy<IndexMap<&'static str, &'static str>> = Lazy::new(|| {
+    IndexMap::from([
+        ("1", "mit Farbstoff"),
+        ("2", "mit Konservierungsstoff"),
+        ("3", "mit Antioxidationsmittel"),
+        ("4", "mit Geschmacksverstärker"),
+        ("5", "geschwefelt"),
+        ("6", "geschwärzt"),
+        ("7", "gewachst"),
+        ("8", "mit Phosphat"),
+        ("9", "mit Süssungsmittel Saccharin"),
+        (
+            "10",
+            "mit Süssungsmittel Aspartam, enth. Phenylalaninquelle",
+        ),
+        ("11", "mit Süssungsmittel Cyclamat"),
+        ("12", "mit Süssungsmittel Acesulfam"),
+        ("13", "chininhaltig"),
+        ("14", "coffeinhaltig"),
+        ("16", "enthält Sulfite"),
+        ("17", "enthält Phenylalanin"),
+    ])
+});
+
+pub static INGREDIENTS_STRING: Lazy<String> =
+    Lazy::new(|| abbreviation_table_to_string(&INGREDIENTS));
+
+pub static ALLERGENS: Lazy<IndexMap<&'static str, &'static str>> = Lazy::new(|| {
+    IndexMap::from([
+        ("AA", "Weizengluten"),
+        ("AB", "Roggengluten"),
+        ("AC", "Gerstengluten"),
+        ("AD", "Hafergluten"),
+        ("AE", "Dinkelgluten"),
+        ("AF", "Kamutgluten"),
+        ("B", "Krebstiere"),
+        ("C", "Eier"),
+        ("D", "Fisch"),
+        ("E", "Erdnüsse"),
+        ("F", "Soja"),
+        ("G", "Milch und Milchprodukte"),
+        ("HA", "Mandel"),
+        ("HB", "Haselnuss"),
+        ("HC", "Walnuss"),
+        ("HD", "Cashew"),
+        ("HE", "Pecannuss"),
+        ("HF", "Paranuss"),
+        ("HG", "Pistazie"),
+        ("HH", "Macadamianuss"),
+        ("HI", "Queenslandnuss"),
+        ("I", "Sellerie"),
+        ("J", "Senf"),
+        ("K", "Sesamsamen"),
+        ("L", "Schwefeldioxid und Sulfite"),
+        ("M", "Lupinen"),
+        ("N", "Weichtiere"),
+        ("O", "Nitrat"),
+        ("P", "Nitritpökelsalz"), 
+    ])
+});
+
+pub static ALLERGENS_STRING: Lazy<String> = Lazy::new(|| abbreviation_table_to_string(&ALLERGENS));
+
+pub static INDICATORS: Lazy<IndexMap<&'static str, &'static str>> = Lazy::new(|| {
+    IndexMap::from([
+        ("V", "vegetarisch"),
+        ("VG", "vegan"),
+        ("S", "Schwein"),
+        ("R", "Rind"),
+        ("G", "Geflügel"),
+        ("F", "Fisch"),
+        ("A", "Alkohol"),
+        ("B", "bio"),
+        ("PHD", "Klimateller (planetary health diet)"),
+    ])
+});
+
+pub static INDICATORS_STRING: Lazy<String> =
+    Lazy::new(|| abbreviation_table_to_string(&INDICATORS));
 
 #[derive(Debug, serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
 pub struct MenuItem {
