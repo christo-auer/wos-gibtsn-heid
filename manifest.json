@@ -1,12 +1,12 @@
 {
-  "manifest_version": "0.1",
+  "dxt_version": "0.1",
   "name": "mcp-wos-gibtsn-heid",
   "display_name": "StWNO Mensa Menus",
   "version": "VERSION_PLACEHOLDER",
-  "description": "Access canteen menus from Studierendenwerk Niederbayern/Ostbayern universities and colleges in Lower Bavaria and Upper Palatinate",
-  "long_description": "Ein Claude MCP Tool für einfachen Zugriff auf die Mensaspeisepläne des Studierendenwerks Niederbayern/Ostbayern. Unterstützt alle Mensen und Cafeterien des StWNOs mit Filterung nach Inhaltsstoffen, Allergenen und bevorzugten Kennzeichnungen wie vegetarisch, vegan, etc.\n\nA Claude MCP tool that provides easy access to canteen menus of the Studierendenwerk Niederbayern/Ostbayern, supporting all StWNO canteens and cafeterias with filtering by ingredients, allergens, and preferred indicators like vegetarian, vegan, etc.",
+  "description": "Zugriff auf den Mensaspeiseplan des Studierendenwerks Niederbayern/Oberpfalz",
+  "long_description": "Ein Claude MCP Tool für einfachen Zugriff auf die Mensaspeisepläne des Studierendenwerks Niederbayern/Oberpfalz. Unterstützt alle Mensen und Cafeterien des StWNOs mit Filterung nach Inhaltsstoffen, Allergenen und bevorzugten Kennzeichnungen wie vegetarisch, vegan, etc.\n\nA Claude MCP tool that provides easy access to canteen menus of the Studierendenwerk Niederbayern/Oberpflatz, supporting all StWNO canteens and cafeterias with filtering by ingredients, allergens, and preferred indicators like vegetarian, vegan, etc.",
   "author": {
-    "name": "Chris Auer",
+    "name": "Christopher Auer",
     "url": "https://github.com/christo-auer"
   },
   "repository": {
