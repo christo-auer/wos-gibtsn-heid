@@ -74,15 +74,23 @@ jobs:
           # Copy binaries with reliable platform detection based on target name
           # Windows binary (x86_64-pc-windows-msvc target)
           find ./mcpb-build -path "*x86_64-pc-windows-msvc*" -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid.exe \;
+          echo "MCPB package binaries:"
+          ls -la mcpb-package/bin/
           
           # macOS binary (x86_64-apple-darwin target)
           find ./mcpb-build -path "*x86_64-apple-darwin*" -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid-darwin \;
+          echo "MCPB package binaries:"
+          ls -la mcpb-package/bin/
           
           # Linux x86_64 binary
           find ./mcpb-build -path "*x86_64-unknown-linux-musl*" -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid-linux \;
+          echo "MCPB package binaries:"
+          ls -la mcpb-package/bin/
           
           # Linux aarch64 binary (ARM64)
           find ./mcpb-build -path "*aarch64-unknown-linux-musl*" -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid-linux-arm64 \;
+          echo "MCPB package binaries:"
+          ls -la mcpb-package/bin/
           
           # Make sure all binaries are executable
           chmod +x mcpb-package/bin/*
