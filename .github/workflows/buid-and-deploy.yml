@@ -27,11 +27,10 @@ jobs:
     runs-on: ${{ matrix.platform.runs-on }}
     steps:
       - name: Install System Dependencies
-        if: contains( matrix.platform.target, 'linux' )
+        #if: contains( matrix.platform.target, 'linux' )
         run: |
           export OPENSSL_DIR=/usr/lib/ssl
           env
-          sudo apt-get update
           sudo apt-get install -y openssl libssl-dev pkg-config gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu
       - name: Checkout
         uses: actions/checkout@v4
