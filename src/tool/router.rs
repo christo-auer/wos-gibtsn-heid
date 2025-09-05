@@ -1,23 +1,23 @@
-use crate::tool::menu_data::{ALLERGENS, INDICATORS, INGREDIENTS, MenuItem};
+use crate::preferences::Preferences;
+use crate::tool::menu_data::{
+    ALLERGENS, ALLERGENS_STRING, INDICATORS, INDICATORS_STRING, INGREDIENTS, INGREDIENTS_STRING,
+    MenuItem,
+};
 use crate::{constants::BASE_URL, tool::loc::Location, tool::loc::location_to_id};
 use chrono::{Datelike, Local};
 use rmcp::handler::server::wrapper::Parameters;
 use rmcp::model::{
     AnnotateAble, CallToolResult, Content, ListResourcesResult, PaginatedRequestParam,
-    ProtocolVersion, RawResource, ReadResourceRequestParam, ReadResourceResult, Resource,
-    ResourceContents, ServerCapabilities, ServerInfo,
+    ProtocolVersion, RawResource, ReadResourceRequestParam, ReadResourceResult, ResourceContents,
+    ServerCapabilities, ServerInfo,
 };
 use rmcp::service::RequestContext;
 use rmcp::{ErrorData, RoleServer, ServerHandler, tool_handler};
 use rmcp::{schemars, tool, tool_router};
 use serde_json::json;
-use tokio::sync::Mutex;
 
 use crate::tool::WosGibtsnHeidService;
 
-const RESOURCE_URI_INGREDIENTS: &str = "text://wos-gibtsn-heid/ingredients";
-const RESOURCE_URI_ALLERGENS: &str = "text://wos-gibtsn-heid/allergens";
-const RESOURCE_URI_INDICATORS: &str = "text://wos-gibtsn-heid/indicators";
 const RESOURCE_URI_ABBREVEATIONS: &str = "text://wos-gibtsn-heid/abbreviations";
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
@@ -28,6 +28,7 @@ struct ParametersFetchMenu {
          - do NOT provide a default location, instead ask for the city AND type (Mensa Cafeteria)
          "#)]
     location: Option<Location>,
+
     #[schemars(
         description = "GERMAN calendar week, if the user asks for the current week, don't pass this parameter"
     )]
@@ -49,18 +50,16 @@ struct ResultFetchMenu {
 }
 
 #[derive(serde::Deserialize, serde::Serialize, schemars::JsonSchema)]
-struct ResultGetLocation {
-    #[schemars(
-        description = "location as set by the user. if empty, the user must be asked for a location before a menu can be fetched."
-    )]
-    location: Option<Location>,
+struct ResultGetPreferences {
+    #[schemars(description = "preferences of the user")]
+    location: Option<Preferences>,
 }
 
 #[tool_router]
 impl WosGibtsnHeidService {
-    pub fn new(loc: Option<Location>) -> WosGibtsnHeidService {
+    pub fn new(preferences: Preferences) -> WosGibtsnHeidService {
         Self {
-            loc: Mutex::new(loc),
+            preferences,
             tool_router: Self::tool_router(),
         }
     }
@@ -80,15 +79,11 @@ impl WosGibtsnHeidService {
         location: Option<Location>,
         calendar_week: Option<u32>,
     ) -> Result<CallToolResult, ErrorData> {
-        let mut stored_location = self.loc.lock().await;
-
-        let Some(location) = location.or(*stored_location) else {
+        let Some(location) = location.or(self.preferences.location) else {
             return Ok(CallToolResult::error(vec![Content::text(
                 "no location is given. ask the user which location should be queried",
             )]));
         };
-
-        *stored_location = Some(location);
 
         let location_id = location_to_id(&location);
 
@@ -135,12 +130,22 @@ impl WosGibtsnHeidService {
     }
 
     #[tool(
-        description = "returns the location as defined by the user. Execute this function BEFORE fetching the menu for the first time to see which location the user is interested in (if any)."
+        description = "CALL THIS BEFORE ANYTHING ELSE. returns the preferences as defined by the user. Execute this function BEFORE fetching the menu for the first time and apply these preferences unless told otherwise."
     )]
-    async fn get_location(&self) -> Result<CallToolResult, ErrorData> {
-        let stored_location = self.loc.lock().await;
-
-        Ok(CallToolResult::structured(json!(*stored_location)))
+    async fn get_preferences(&self) -> Result<CallToolResult, ErrorData> {
+        Ok(CallToolResult::success(vec![
+            Content::json(&self.preferences).unwrap(),
+            // Content::resource_link(RawResource::new(
+            //     RESOURCE_URI_ABBREVEATIONS,
+            //     "abbreviations of ingredients, allergens, indicators",
+            // )),
+            Content::text(format!(
+                "Indicators: {}\nIngredients: {}\nAllergens: {}",
+                INDICATORS_STRING.as_str(),
+                INGREDIENTS_STRING.as_str(),
+                ALLERGENS_STRING.as_str(),
+            )),
+        ]))
     }
 
     #[tool(
@@ -198,33 +203,15 @@ impl ServerHandler for WosGibtsnHeidService {
         _: RequestContext<RoleServer>,
     ) -> Result<ReadResourceResult, ErrorData> {
         match uri.as_str() {
-            RESOURCE_URI_INDICATORS => Ok(ReadResourceResult {
-                contents: vec![ResourceContents::text(
-                    INDICATORS.to_string(),
-                    RESOURCE_URI_INDICATORS.to_string(),
-                )],
-            }),
-            RESOURCE_URI_ALLERGENS => Ok(ReadResourceResult {
-                contents: vec![ResourceContents::text(
-                    ALLERGENS.to_string(),
-                    RESOURCE_URI_ALLERGENS.to_string(),
-                )],
-            }),
-            RESOURCE_URI_INGREDIENTS => Ok(ReadResourceResult {
-                contents: vec![ResourceContents::text(
-                    INGREDIENTS.to_string(),
-                    RESOURCE_URI_INGREDIENTS.to_string(),
-                )],
-            }),
             RESOURCE_URI_ABBREVEATIONS => Ok(ReadResourceResult {
                 contents: vec![ResourceContents::text(
                     "Inhaltsstoffe\n".to_string()
-                        + INGREDIENTS
-                        + "Allergene\n"
-                        + ALLERGENS
-                        + "Kennzeichnungen\n"
-                        + INDICATORS,
-                    RESOURCE_URI_INGREDIENTS.to_string(),
+                        + &INGREDIENTS_STRING
+                        + "\nAllergene\n"
+                        + &ALLERGENS_STRING
+                        + "\nKennzeichnungen\n"
+                        + &INDICATORS_STRING,
+                    RESOURCE_URI_ABBREVEATIONS.to_string(),
                 )],
             }),
             _ => Err(ErrorData::resource_not_found(
@@ -244,30 +231,9 @@ impl ServerHandler for WosGibtsnHeidService {
                 RawResource {
                     description: Some("contains all abbreviations of all indicators/ingredients/allergens in the format `symbol: description`".into()),
                     uri: RESOURCE_URI_ABBREVEATIONS.into(),
-                    name: "Alle Abkürzungen".into(),
+                    name: "Abkürzungen".into(),
                     mime_type: Some("text".into()),
                     size: Some((INDICATORS.len() + ALLERGENS.len() + INGREDIENTS.len()) as u32),
-                }.no_annotation(),
-                RawResource {
-                    description: Some("contains the descriptions/names of the ingredient numbers (1,2,3,...) in the format `number: ingredient`.".into()),
-                    uri: RESOURCE_URI_INGREDIENTS.into(),
-                    name: "Abkürzungen Inhaltsstoffe".into(),
-                    mime_type: Some("text".into()),
-                    size: Some(INGREDIENTS.len() as u32),
-                }.no_annotation(),
-                RawResource {
-                    description: Some("contains the abbreviations of all allergens in the format `symbol: allergen`".into()),
-                    uri: RESOURCE_URI_ALLERGENS.into(),
-                    name: "Abkürzungen Allergene".into(),
-                    mime_type: Some("text".into()),
-                    size: Some(ALLERGENS.len() as u32),
-                }.no_annotation(),
-                RawResource {
-                    description: Some("contains the abbreviations of all indicators (vegetarian, vegan, pork, etc.) in the format `symbol: indicator`".into()),
-                    uri: RESOURCE_URI_INDICATORS.into(),
-                    name: "Abkürzungen Kennzeichnungen".into(),
-                    mime_type: Some("text".into()),
-                    size: Some(INDICATORS.len() as u32),
                 }.no_annotation(),
             ],
             next_cursor: None,
