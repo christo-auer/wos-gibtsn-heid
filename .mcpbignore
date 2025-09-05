@@ -1,0 +1,30 @@
+# Rust build artifacts
+/target/
+Cargo.lock
+
+# Development files
+/.git/
+/.github/
+.gitignore
+.envrc
+
+# Documentation that's not needed in the bundle
+CHANGELOG.md
+README.md
+
+# Nix development files
+flake.nix
+flake.lock
+
+# Source code (not needed for binary distribution)
+/src/
+
+# The original manifest.json at root (we create a custom one for MCPB)
+manifest.json
+
+# IDE and system files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
