@@ -37,7 +37,14 @@ Weitere Informationen über das Model Context Protocol finden Sie in der [Claude
 
 ### MCPB Paket
 
-TODO
+Dieses Tool ist auch als MCPB (MCP Bundle) Paket verfügbar für die einfache Ein-Klick-Installation in unterstützten MCP-Clients wie Claude Desktop:
+
+1. Laden Sie das neueste `.mcpb` Paket von der [GitHub-Releases-Seite](https://github.com/christo-auer/mcp-wos-gibtsn-heid/releases) herunter
+2. Öffnen Sie die Datei mit Claude Desktop - es wird automatisch ein Installationsdialog angezeigt
+3. Konfigurieren Sie Ihre Präferenzen (Standardort, zu vermeidende Allergene, bevorzugte Kennzeichnungen) über die benutzerfreundliche Oberfläche
+4. Das Tool ist sofort einsatzbereit
+
+Das MCPB-Paket enthält alle plattformspezifischen Binärdateien und eine benutzerfreundliche Konfigurationsoberfläche für alle verfügbaren Optionen.
 
 ### Aus dem Quellcode bauen
 
@@ -223,11 +230,22 @@ To use this tool with Claude:
 
 For more information about the Model Context Protocol, see the [Claude MCP documentation](https://docs.anthropic.com/claude/docs/model-context-protocol).
 
+### MCPB Package
+
+This tool is also available as an MCPB (MCP Bundle) package for easy one-click installation in supported MCP clients like Claude Desktop:
+
+1. Download the latest `.mcpb` package from the [GitHub releases page](https://github.com/christo-auer/mcp-wos-gibtsn-heid/releases)
+2. Open the file with Claude Desktop - it will automatically show an installation dialog
+3. Configure your preferences (default location, allergens to avoid, preferred indicators) through the user-friendly interface
+4. The tool is ready to use immediately
+
+The MCPB package includes all platform-specific binaries and provides a user-friendly configuration interface for all available options.
+
 ### Standalone CLI
 
 To install the standalone CLI version:
 
-1. Download the latest release from the [GitHub releases page](https://github.com/yourusername/mcp-wos-gibtsn-heid/releases)
+1. Download the latest release from the [GitHub releases page](https://github.com/christo-auer/mcp-wos-gibtsn-heid/releases)
 2. Extract the archive
 3. Make the binary executable:
    ```
