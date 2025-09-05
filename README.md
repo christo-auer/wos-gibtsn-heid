@@ -1,3 +1,5 @@
+![Logo von Wos Gibstn Heid](resources/logo.png)
+
 # mcp-wos-gibtsn-heid
 
 Ein Claude MCP (Model Context Protocol) Tool, das einfachen Zugriff auf die Mensaspeisepläne des [Studierendenwerks Niederbayern/Ostbayern](https:://www.stwno.de) ermöglicht:
