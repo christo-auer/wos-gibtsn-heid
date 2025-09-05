@@ -1,0 +1,98 @@
+{
+  "manifest_version": "0.1",
+  "name": "mcp-wos-gibtsn-heid",
+  "display_name": "StWNO Mensa Menus",
+  "version": "VERSION_PLACEHOLDER",
+  "description": "Access canteen menus from Studierendenwerk Niederbayern/Ostbayern universities and colleges in Lower Bavaria and Upper Palatinate",
+  "long_description": "Ein Claude MCP Tool für einfachen Zugriff auf die Mensaspeisepläne des Studierendenwerks Niederbayern/Ostbayern. Unterstützt alle Mensen und Cafeterien des StWNOs mit Filterung nach Inhaltsstoffen, Allergenen und bevorzugten Kennzeichnungen wie vegetarisch, vegan, etc.\n\nA Claude MCP tool that provides easy access to canteen menus of the Studierendenwerk Niederbayern/Ostbayern, supporting all StWNO canteens and cafeterias with filtering by ingredients, allergens, and preferred indicators like vegetarian, vegan, etc.",
+  "author": {
+    "name": "Chris Auer",
+    "url": "https://github.com/christo-auer"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/christo-auer/mcp-wos-gibtsn-heid"
+  },
+  "homepage": "https://github.com/christo-auer/mcp-wos-gibtsn-heid",
+  "documentation": "https://github.com/christo-auer/mcp-wos-gibtsn-heid/blob/main/README.md",
+  "support": "https://github.com/christo-auer/mcp-wos-gibtsn-heid/issues",
+  "server": {
+    "type": "binary",
+    "entry_point": "bin/mcp-wos-gibtsn-heid",
+    "mcp_config": {
+      "command": "${__dirname}/bin/mcp-wos-gibtsn-heid",
+      "args": [
+        "--location", "${user_config.location}",
+        "--avoid-allergens", "${user_config.avoid_allergens}",
+        "--avoid-ingredients", "${user_config.avoid_ingredients}",
+        "--preferred-indicators", "${user_config.preferred_indicators}"
+      ],
+      "env": {},
+      "platform_overrides": {
+        "win32": {
+          "command": "${__dirname}/bin/mcp-wos-gibtsn-heid.exe"
+        },
+        "darwin": {
+          "command": "${__dirname}/bin/mcp-wos-gibtsn-heid-darwin"
+        },
+        "linux": {
+          "command": "${__dirname}/bin/mcp-wos-gibtsn-heid-linux"
+        }
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "fetch_menu",
+      "description": "Fetches the menu for a specific location and calendar week"
+    },
+    {
+      "name": "fetch_menu_for_this_week", 
+      "description": "Fetches the menu for a specific location for this week"
+    },
+    {
+      "name": "fetch_menu_for_next_week",
+      "description": "Fetches the menu for a specific location for next week"
+    },
+    {
+      "name": "get_preferences",
+      "description": "Returns the user's preferences including default location, allergen avoidance, and preferred indicators"
+    }
+  ],
+  "keywords": ["mensa", "canteen", "menu", "university", "student", "food", "allergens", "bayern", "bavaria", "regensburg", "passau", "landshut", "deggendorf"],
+  "license": "MIT",
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": ["darwin", "win32", "linux"]
+  },
+  "user_config": {
+    "location": {
+      "type": "string",
+      "title": "Default Location",
+      "description": "Default location for which to fetch the menu. Available options: HS-LA (Hochschule Landshut Mensa), HS-LA-Cafeteria (Hochschule Landshut Cafeteria), UNI-R (Universität Regensburg Mensa), UNI-R-Gs (Universität Regensburg Mensa - Gästesaal), Cafeteria-PT (Universität Regensburg Cafeteria PT), Cafeteria-Chemie (Universität Regensburg Cafeteria Chemie), Cafeteria-Sammelgebaeude (Universität Regensburg Cafeteria Sammelgebäude), Cafeteria-Sport (Universität Regensburg Cafeteria Sport), HS-R-tag (OTH Regensburg Mensa Seybothstraße Mittags), HS-R-abend (OTH Regensburg Mensa Seybothstraße Abends), Cafeteria-Pruefening (OTH Regensburg Mensa Prüfeningerstraße Mittags), UNI-P (Universität Passau Mensa), Cafeteria-Nikolakloster (Universität Passau Cafeteria Nikolakloster), HS-DEG (TH Deggendorf Mensa), TH-DEG-Cham (TH Deggendorf-Cham), HS-PAN (European Campus Pfarrkirchen), HS-SR (TUM Campus Straubing)",
+      "required": false,
+      "default": ""
+    },
+    "avoid_allergens": {
+      "type": "string",
+      "title": "Avoid Allergens",
+      "description": "Comma-separated list of allergens to avoid or warn about. Available allergens: AA (Weizengluten), AB (Roggengluten), AC (Gerstengluten), AD (Hafergluten), AE (Dinkelgluten), AF (Kamutgluten), B (Krebstiere), C (Eier), D (Fisch), E (Erdnüsse), F (Soja), G (Milch und Milchprodukte), HA (Mandel), HB (Haselnuss), HC (Walnuss), HD (Cashew), HE (Pecannuss), HF (Paranuss), HG (Pistazie), HH (Macadamianuss), HI (Queenslandnuss), I (Sellerie), J (Senf), K (Sesamsamen), L (Schwefeldioxid und Sulfite), M (Lupinen), N (Weichtiere), O (Nitrat), P (Nitritpökelsalz). Example: AA,C,G for wheat gluten, eggs, and dairy products",
+      "required": false,
+      "default": ""
+    },
+    "avoid_ingredients": {
+      "type": "string",
+      "title": "Avoid Ingredients",
+      "description": "Comma-separated list of ingredients to avoid or warn about. Available ingredients: 1 (mit Farbstoff), 2 (mit Konservierungsstoff), 3 (mit Antioxidationsmittel), 4 (mit Geschmacksverstärker), 5 (geschwefelt), 6 (geschwärzt), 7 (gewachst), 8 (mit Phosphat), 9 (mit Süssungsmittel Saccharin), 10 (mit Süssungsmittel Aspartam), 11 (mit Süssungsmittel Cyclamat), 12 (mit Süssungsmittel Acesulfam), 13 (chininhaltig), 14 (coffeinhaltig), 16 (enthält Sulfite), 17 (enthält Phenylalanin). Example: 1,4,2 for colorants, flavor enhancers, and preservatives",
+      "required": false,
+      "default": ""
+    },
+    "preferred_indicators": {
+      "type": "string",
+      "title": "Preferred Indicators",
+      "description": "Comma-separated list of preferred indicators to emphasize in dish selection. Available indicators: V (vegetarisch), VG (vegan), S (Schwein), R (Rind), G (Geflügel), F (Fisch), A (Alkohol), B (bio), PHD (Klimateller - planetary health diet). Example: V,VG for vegetarian and vegan",
+      "required": false,
+      "default": ""
+    }
+  }
+}
