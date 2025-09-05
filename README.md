@@ -1,4 +1,4 @@
-![Logo von Wos Gibstn Heid](resources/logo.png)
+![Logo von Wos Gibstn Heid](resources/logo-scaled.png)
 
 # mcp-wos-gibtsn-heid
 
