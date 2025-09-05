@@ -56,7 +56,8 @@ jobs:
           node-version: '18'
 
       - name: Install MCPB CLI
-        run: npm install -g @anthropic-ai/mcpb
+        run: npm install -g @anthropic-ai/dxt
+        # run: npm install -g @anthropic-ai/mcpb # <- update to this name when https://github.com/anthropics/mcpb/issues/95#92 is resolved
 
       - name: Download all release artifacts
         uses: actions/download-artifact@v4
