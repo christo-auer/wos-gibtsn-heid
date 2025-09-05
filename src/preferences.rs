@@ -5,7 +5,12 @@ use rmcp::schemars;
 #[derive(Parser, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 #[command(version, about)]
 pub struct Preferences {
-    #[arg(long, value_name = "LOCATION", help = "default-location")]
+    #[arg(
+        long,
+        value_name = "LOCATION",
+        help = "default-location",
+        ignore_case = true
+    )]
     #[schemars(description = "default location for which for menu should be fetched")]
     pub location: Option<Location>,
 
@@ -13,7 +18,8 @@ pub struct Preferences {
         long,
         value_delimiter = ',',
         value_name = "LIST-OF-ALLERGENES",
-        help = r#"comma-separated list of allgenes to avoid, e.g, AA,E,L"#
+        help = r#"comma-separated list of allgenes to avoid, e.g, AA,E,L"#,
+        ignore_case = true
     )]
     #[schemars(description = "list of allergenes that MUST BE AVOIDED or WARNED about ")]
     pub avoid_allergens: Option<Vec<String>>,
@@ -22,7 +28,8 @@ pub struct Preferences {
         long,
         value_delimiter = ',',
         value_name = "LIST-OF-INGREDIENTS",
-        help = r#"comma-separated list of ingredients to avoid, e.g, 1,4,2"#
+        help = r#"comma-separated list of ingredients to avoid, e.g, 1,4,2"#,
+        ignore_case = true
     )]
     #[schemars(description = "list of ingredients that MUST BE AVOIDED or WARNED about ")]
     pub avoid_ingredients: Option<Vec<String>>,
@@ -31,7 +38,8 @@ pub struct Preferences {
         long,
         value_delimiter = ',',
         value_name = "LIST-OF-INDICATORS",
-        help = r#"comma-separated list of preferred indicators, e.g, V,VG"#
+        help = r#"comma-separated list of preferred indicators, e.g, V,VG"#,
+        ignore_case = true
     )]
     #[schemars(
         description = "preferred indicators to list, emphasize selection of dishes according to this list"
