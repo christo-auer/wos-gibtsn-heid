@@ -130,15 +130,11 @@ impl WosGibtsnHeidService {
     }
 
     #[tool(
-        description = "CALL THIS BEFORE ANYTHING ELSE. returns the preferences as defined by the user. Execute this function BEFORE fetching the menu for the first time and apply these preferences unless told otherwise."
+        description = "CALL THIS BEFORE ANYTHING ELSE. returns the user's preferences. Execute this function BEFORE fetching the menu for the first time and apply these preferences unless told otherwise."
     )]
     async fn get_preferences(&self) -> Result<CallToolResult, ErrorData> {
         Ok(CallToolResult::success(vec![
             Content::json(&self.preferences).unwrap(),
-            // Content::resource_link(RawResource::new(
-            //     RESOURCE_URI_ABBREVEATIONS,
-            //     "abbreviations of ingredients, allergens, indicators",
-            // )),
             Content::text(format!(
                 "Indicators: {}\nIngredients: {}\nAllergens: {}",
                 INDICATORS_STRING.as_str(),
