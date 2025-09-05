@@ -67,30 +67,27 @@ jobs:
         run: |
           mkdir -p mcpb-package/bin
           
-          # Find all the built binaries and copy them with proper names
-          for artifact_dir in ./mcpb-build/*/; do
-            if [ -d "$artifact_dir" ]; then
-              for binary in "$artifact_dir"mcp-wos-gibtsn-heid*; do
-                if [ -f "$binary" ] && [ -x "$binary" ]; then
-                  # Extract platform info from the path/name and copy with standard naming
-                  if [[ "$binary" == *"windows"* ]] || [[ "$binary" == *"msvc"* ]]; then
-                    cp "$binary" mcpb-package/bin/mcp-wos-gibtsn-heid.exe
-                  elif [[ "$binary" == *"darwin"* ]]; then
-                    cp "$binary" mcpb-package/bin/mcp-wos-gibtsn-heid-darwin
-                  elif [[ "$binary" == *"linux"* ]]; then
-                    cp "$binary" mcpb-package/bin/mcp-wos-gibtsn-heid-linux
-                  else
-                    cp "$binary" mcpb-package/bin/mcp-wos-gibtsn-heid-$(basename "$binary")
-                  fi
-                fi
-              done
-            fi
-          done
+          echo "Examining downloaded artifacts..."
+          find ./mcpb-build -type f -name "mcp-wos-gibtsn-heid*" -exec ls -la {} \;
+          
+          # Copy binaries with reliable platform detection based on target name
+          # Windows binary (x86_64-pc-windows-msvc target)
+          find ./mcpb-build -path "*x86_64-pc-windows-msvc*" -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid.exe \;
+          
+          # macOS binary (x86_64-apple-darwin target)
+          find ./mcpb-build -path "*x86_64-apple-darwin*" -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid-darwin \;
+          
+          # Linux x86_64 binary
+          find ./mcpb-build -path "*x86_64-unknown-linux-musl*" -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid-linux \;
+          
+          # Linux aarch64 binary (ARM64)
+          find ./mcpb-build -path "*aarch64-unknown-linux-musl*" -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid-linux-arm64 \;
           
           # Make sure all binaries are executable
           chmod +x mcpb-package/bin/*
           
-          # List what we have
+          # List what we have for verification
+          echo "MCPB package binaries:"
           ls -la mcpb-package/bin/
 
       - name: Prepare MCPB manifest
