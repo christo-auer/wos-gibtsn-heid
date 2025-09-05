@@ -26,13 +26,6 @@ jobs:
 
     runs-on: ${{ matrix.platform.runs-on }}
     steps:
-      # - name: Install System Dependencies
-      #   if: contains( matrix.platform.os-name, 'Linux' )
-      #   run: |
-      #     export OPENSSL_DIR=/usr/lib/ssl
-      #     env
-      #     sudo apt-get update
-      #     sudo apt-get install -y openssl libssl-dev pkg-config gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu
       - name: Checkout
         uses: actions/checkout@v4
       - name: Build binary
@@ -48,3 +41,94 @@ jobs:
           executable-name: mcp-wos-gibtsn-heid
           target: ${{ matrix.platform.target }}
           changes-file: "CHANGELOG.md"
+
+  mcpb:
+    name: Build MCPB Package
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install MCPB CLI
+        run: npm install -g @anthropic-ai/mcpb
+
+      - name: Download all release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./mcpb-build
+
+      - name: Prepare MCPB directory
+        run: |
+          mkdir -p mcpb-package/bin
+          
+          # Find all the built binaries and copy them with proper names
+          for artifact_dir in ./mcpb-build/*/; do
+            if [ -d "$artifact_dir" ]; then
+              for binary in "$artifact_dir"mcp-wos-gibtsn-heid*; do
+                if [ -f "$binary" ] && [ -x "$binary" ]; then
+                  # Extract platform info from the path/name and copy with standard naming
+                  if [[ "$binary" == *"windows"* ]] || [[ "$binary" == *"msvc"* ]]; then
+                    cp "$binary" mcpb-package/bin/mcp-wos-gibtsn-heid.exe
+                  elif [[ "$binary" == *"darwin"* ]]; then
+                    cp "$binary" mcpb-package/bin/mcp-wos-gibtsn-heid-darwin
+                  elif [[ "$binary" == *"linux"* ]]; then
+                    cp "$binary" mcpb-package/bin/mcp-wos-gibtsn-heid-linux
+                  else
+                    cp "$binary" mcpb-package/bin/mcp-wos-gibtsn-heid-$(basename "$binary")
+                  fi
+                fi
+              done
+            fi
+          done
+          
+          # Make sure all binaries are executable
+          chmod +x mcpb-package/bin/*
+          
+          # List what we have
+          ls -la mcpb-package/bin/
+
+      - name: Prepare MCPB manifest
+        run: |
+          cd mcpb-package
+          
+          # Copy the template manifest file
+          cp ../manifest.json manifest.json
+          
+          # Replace version placeholder with actual version (remove 'v' prefix if present)
+          VERSION="${{ github.ref_name }}"
+          VERSION="${VERSION#v}"
+          sed -i "s/VERSION_PLACEHOLDER/$VERSION/g" manifest.json
+
+      - name: Validate MCPB manifest
+        run: |
+          cd mcpb-package
+          mcpb validate manifest.json
+
+      - name: Build MCPB package
+        run: |
+          cd mcpb-package
+          mcpb pack . "../mcp-wos-gibtsn-heid.mcpb"
+
+      - name: Get Release Upload URL
+        id: get_release
+        run: |
+          TAG="${{ github.ref_name }}"
+          UPLOAD_URL=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG" | \
+            jq -r '.upload_url' | sed 's/{?name,label}//')
+          echo "upload_url=$UPLOAD_URL" >> $GITHUB_OUTPUT
+
+      - name: Upload MCPB to release
+        run: |
+          TAG="${{ github.ref_name }}"
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/octet-stream" \
+            "${{ steps.get_release.outputs.upload_url }}?name=mcp-wos-gibtsn-heid-${TAG}.mcpb&label=MCPB+Package" \
+            --data-binary @mcp-wos-gibtsn-heid.mcpb
