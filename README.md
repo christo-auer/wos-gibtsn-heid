@@ -24,7 +24,7 @@ Der Name *wos gibts'n heid* ist bayerischer Dialekt für "Was gibt es heute?".
 
 Um dieses Tool mit Claude zu verwenden:
 
-1. Laden Sie die neueste Version der Binärdatei von der [GitHub-Releases-Seite](https://github.com/yourusername/mcp-wos-gibtsn-heid/releases) herunter
+1. Laden Sie die neueste Version der Binärdatei von der [GitHub-Releases-Seite](https://github.com/christo-auer/wos-gibtsn-heid/releases) herunter
 2. Kopieren Sie die ausführbare Binärdatei an einen geeigneten Ort.
 3. Konfigurieren Sie Claude Desktop/Claude Code zur Ausführung dieser Binärdatei als externes Tool:
    - Öffnen Sie die Claude Desktop-Einstellungen
