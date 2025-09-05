@@ -27,7 +27,7 @@ jobs:
     runs-on: ${{ matrix.platform.runs-on }}
     steps:
       - name: Install System Dependencies
-        if: matrix.platform.runs-on == 'ubuntu-latest'
+        if: contains( matrix.platform.target, 'linux' )
         run: |
           export OPENSSL_DIR=/usr/lib/ssl
           env
