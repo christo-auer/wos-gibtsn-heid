@@ -56,8 +56,7 @@ jobs:
           node-version: '18'
 
       - name: Install MCPB CLI
-        run: npm install -g @anthropic-ai/dxt
-        # run: npm install -g @anthropic-ai/mcpb # <- update to this name when https://github.com/anthropics/mcpb/issues/95#92 is resolved
+        run: npm install -g @anthropic-ai/mcpb
 
       - name: Download all release artifacts
         uses: actions/download-artifact@v4
@@ -67,37 +66,49 @@ jobs:
       - name: Prepare MCPB directory
         run: |
           mkdir -p mcpb-package/bin
+          mkdir -p extracted
           
           echo "Examining downloaded artifacts..."
-          find ./mcpb-build -type f -name "mcp-wos-gibtsn-heid*" -exec ls -la {} \;
+          find ./mcpb-build -type f -name "*.tar.gz" -o -name "*.zip" | grep -v "\.sha256$" | sort
           
-          # Copy binaries with reliable platform detection based on target name
-          # Windows binary (x86_64-pc-windows-msvc target)
-          find ./mcpb-build -path "*x86_64-pc-windows-msvc*" -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid.exe \;
-          echo "MCPB package binaries:"
-          ls -la mcpb-package/bin/
+          # Extract Windows binary (.zip)
+          echo "Extracting Windows binary..."
+          find ./mcpb-build -path "*Windows*" -name "*.zip" -not -name "*.sha256" -exec unzip -j {} -d extracted/windows \;
+          find extracted/windows -type f -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid.exe \;
+          echo "Windows binary extracted:"
+          ls -la extracted/windows || echo "No Windows binary found!"
           
-          # macOS binary (x86_64-apple-darwin target)
-          find ./mcpb-build -path "*x86_64-apple-darwin*" -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid-darwin \;
-          echo "MCPB package binaries:"
-          ls -la mcpb-package/bin/
+          # Extract macOS binary (.tar.gz)
+          echo "Extracting macOS binary..."
+          find ./mcpb-build -path "*macOS*" -name "*.tar.gz" -not -name "*.sha256" -exec tar -xzf {} -C extracted/macos --strip-components=1 \;
+          mkdir -p extracted/macos
+          find ./mcpb-build -path "*macOS*" -name "*.tar.gz" -not -name "*.sha256" -exec tar -xzf {} -C extracted/macos \;
+          find extracted/macos -type f -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid-darwin \;
+          echo "macOS binary extracted:"
+          ls -la extracted/macos || echo "No macOS binary found!"
           
-          # Linux x86_64 binary
-          find ./mcpb-build -path "*x86_64-unknown-linux-musl*" -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid-linux \;
-          echo "MCPB package binaries:"
-          ls -la mcpb-package/bin/
+          # Extract Linux x86_64 binary (.tar.gz)
+          echo "Extracting Linux x86_64 binary..."
+          mkdir -p extracted/linux-x86_64
+          find ./mcpb-build -path "*Linux*x86_64*" -name "*.tar.gz" -not -name "*.sha256" -exec tar -xzf {} -C extracted/linux-x86_64 \;
+          find extracted/linux-x86_64 -type f -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid-linux \;
+          echo "Linux x86_64 binary extracted:"
+          ls -la extracted/linux-x86_64 || echo "No Linux x86_64 binary found!"
           
-          # Linux aarch64 binary (ARM64)
-          find ./mcpb-build -path "*aarch64-unknown-linux-musl*" -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid-linux-arm64 \;
-          echo "MCPB package binaries:"
-          ls -la mcpb-package/bin/
+          # Extract Linux ARM64 binary (.tar.gz)
+          echo "Extracting Linux ARM64 binary..."
+          mkdir -p extracted/linux-arm64
+          find ./mcpb-build -path "*Linux*arm64*" -name "*.tar.gz" -not -name "*.sha256" -exec tar -xzf {} -C extracted/linux-arm64 \;
+          find extracted/linux-arm64 -type f -name "mcp-wos-gibtsn-heid*" -exec cp {} mcpb-package/bin/mcp-wos-gibtsn-heid-linux-arm64 \;
+          echo "Linux ARM64 binary extracted:"
+          ls -la extracted/linux-arm64 || echo "No Linux ARM64 binary found!"
           
           # Make sure all binaries are executable
-          chmod +x mcpb-package/bin/*
+          chmod +x mcpb-package/bin/* 2>/dev/null || echo "No binaries found to make executable"
           
           # List what we have for verification
           echo "MCPB package binaries:"
-          ls -la mcpb-package/bin/
+          ls -la mcpb-package/bin/ || echo "No binaries in package directory!"
 
       - name: Prepare MCPB manifest
         run: |
@@ -114,12 +125,12 @@ jobs:
       - name: Validate MCPB manifest
         run: |
           cd mcpb-package
-          mcpb validate manifest.json
+          mcpb validate manifest.json || dxt validate manifest.json
 
       - name: Build MCPB package
         run: |
           cd mcpb-package
-          mcpb pack . "../mcp-wos-gibtsn-heid.mcpb"
+          mcpb pack . "../mcp-wos-gibtsn-heid.mcpb" || dxt pack . "../mcp-wos-gibtsn-heid.mcpb"
 
       - name: Get Release Upload URL
         id: get_release
