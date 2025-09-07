@@ -1,9 +1,7 @@
+use crate::abbreviations::all::*;
+use crate::constants::BASE_URL;
 use crate::preferences::Preferences;
-use crate::tool::menu_data::{
-    ALLERGENS, ALLERGENS_STRING, INDICATORS, INDICATORS_STRING, INGREDIENTS, INGREDIENTS_STRING,
-    MenuItem,
-};
-use crate::{constants::BASE_URL, tool::loc::Location, tool::loc::location_to_id};
+use crate::tool::menu_data::MenuItem;
 use chrono::{Datelike, Local};
 use rmcp::handler::server::wrapper::Parameters;
 use rmcp::model::{
@@ -18,7 +16,7 @@ use serde_json::json;
 
 use crate::tool::WosGibtsnHeidService;
 
-const RESOURCE_URI_ABBREVEATIONS: &str = "text://wos-gibtsn-heid/abbreviations";
+const RESOURCE_URI_ABBREVIATIONS: &str = "text://wos-gibtsn-heid/abbreviations";
 
 #[derive(serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
 struct ParametersFetchMenu {
@@ -79,7 +77,7 @@ impl WosGibtsnHeidService {
         location: Option<Location>,
         calendar_week: Option<u32>,
     ) -> Result<CallToolResult, ErrorData> {
-        let Some(location) = location.or(self.preferences.location) else {
+        let Some(location) = location.or(self.preferences.location.clone()) else {
             return Ok(CallToolResult::error(vec![Content::text(
                 "no location is given. ask the user which location should be queried",
             )]));
@@ -130,16 +128,17 @@ impl WosGibtsnHeidService {
     }
 
     #[tool(
-        description = "CALL THIS BEFORE ANYTHING ELSE. returns the user's preferences. Execute this function BEFORE fetching the menu for the first time and apply these preferences unless told otherwise."
+        description = "CALL THIS BEFORE ANYTHING ELSE. returns the user's preferences. Execute this function BEFORE fetching the menu for the first time and apply these preferences unless told otherwise. IMPORTANT: If values are marked as Unknown give the user a warning and list alle Unknown values and tell the user to check the configuration of this tool."
     )]
     async fn get_preferences(&self) -> Result<CallToolResult, ErrorData> {
         Ok(CallToolResult::success(vec![
             Content::json(&self.preferences).unwrap(),
             Content::text(format!(
-                "Indicators: {}\nIngredients: {}\nAllergens: {}",
-                INDICATORS_STRING.as_str(),
-                INGREDIENTS_STRING.as_str(),
-                ALLERGENS_STRING.as_str(),
+                "{}{}{}{}",
+                Allergen::describe_all("Allergens:"),
+                Ingredient::describe_all("Ingredients:"),
+                Indicator::describe_all("Indicators:"),
+                Location::describe_all("Locations:"),
             )),
         ]))
     }
@@ -185,7 +184,7 @@ impl ServerHandler for WosGibtsnHeidService {
     fn get_info(&self) -> ServerInfo {
         ServerInfo { capabilities: ServerCapabilities::builder()
                 .enable_tools()
-                .enable_resources()
+                //.enable_resources()
                 .build(),
             instructions: Some("This server provides access to the menus (Speisepläne) of the Studierendenwerk Niederbayern Ostbayern".to_string()),
             protocol_version: ProtocolVersion::V_2024_11_05,
@@ -199,15 +198,16 @@ impl ServerHandler for WosGibtsnHeidService {
         _: RequestContext<RoleServer>,
     ) -> Result<ReadResourceResult, ErrorData> {
         match uri.as_str() {
-            RESOURCE_URI_ABBREVEATIONS => Ok(ReadResourceResult {
+            RESOURCE_URI_ABBREVIATIONS => Ok(ReadResourceResult {
                 contents: vec![ResourceContents::text(
-                    "Inhaltsstoffe\n".to_string()
-                        + &INGREDIENTS_STRING
-                        + "\nAllergene\n"
-                        + &ALLERGENS_STRING
-                        + "\nKennzeichnungen\n"
-                        + &INDICATORS_STRING,
-                    RESOURCE_URI_ABBREVEATIONS.to_string(),
+                    format!(
+                        "{}{}{}{}",
+                        Allergen::describe_all("Allergens:"),
+                        Ingredient::describe_all("Ingredients:"),
+                        Indicator::describe_all("Indicators:"),
+                        Location::describe_all("Locations:"),
+                    ),
+                    RESOURCE_URI_ABBREVIATIONS.to_string(),
                 )],
             }),
             _ => Err(ErrorData::resource_not_found(
@@ -226,10 +226,10 @@ impl ServerHandler for WosGibtsnHeidService {
             resources: vec![
                 RawResource {
                     description: Some("contains all abbreviations of all indicators/ingredients/allergens in the format `symbol: description`".into()),
-                    uri: RESOURCE_URI_ABBREVEATIONS.into(),
+                    uri: RESOURCE_URI_ABBREVIATIONS.into(),
                     name: "Abkürzungen".into(),
                     mime_type: Some("text".into()),
-                    size: Some((INDICATORS.len() + ALLERGENS.len() + INGREDIENTS.len()) as u32),
+                    size: Some(0),
                 }.no_annotation(),
             ],
             next_cursor: None,

@@ -1,9 +1,9 @@
-use crate::tool::loc::Location;
+use crate::abbreviations::all::*;
 use clap::Parser;
 use rmcp::schemars;
 
 #[derive(Parser, serde::Serialize, serde::Deserialize, schemars::JsonSchema)]
-#[command(version, about)]
+#[command(version, about, ignore_errors = true)]
 pub struct Preferences {
     #[arg(
         long,
@@ -22,7 +22,7 @@ pub struct Preferences {
         ignore_case = true
     )]
     #[schemars(description = "list of allergenes that MUST BE AVOIDED or WARNED about ")]
-    pub avoid_allergens: Option<Vec<String>>,
+    pub avoid_allergens: Option<Vec<Allergen>>,
 
     #[arg(
         long,
@@ -32,7 +32,7 @@ pub struct Preferences {
         ignore_case = true
     )]
     #[schemars(description = "list of ingredients that MUST BE AVOIDED or WARNED about ")]
-    pub avoid_ingredients: Option<Vec<String>>,
+    pub avoid_ingredients: Option<Vec<Ingredient>>,
 
     #[arg(
         long,
@@ -44,21 +44,14 @@ pub struct Preferences {
     #[schemars(
         description = "preferred indicators to list, emphasize selection of dishes according to this list"
     )]
-    pub preferred_indicators: Option<Vec<String>>,
+    pub preferred_indicators: Option<Vec<Indicator>>,
 
     #[serde(skip_serializing)]
-    #[arg(long, help = "list available locations")]
-    pub list_locations: bool,
-
-    #[serde(skip_serializing)]
-    #[arg(long, help = "list available allergens")]
-    pub list_allergens: bool,
-
-    #[serde(skip_serializing)]
-    #[arg(long, help = "list available ingredients")]
-    pub list_ingredients: bool,
-
-    #[serde(skip_serializing)]
-    #[arg(long, help = "list available indicators")]
-    pub list_indicators: bool,
+    #[arg(
+        long,
+        value_name = "LIST",
+        help = "list options for: location, ingredients, indicators, allergens",
+        ignore_case = true
+    )]
+    pub list: Option<String>,
 }

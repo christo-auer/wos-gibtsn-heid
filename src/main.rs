@@ -2,13 +2,10 @@ use clap::Parser;
 use rmcp::ServiceExt;
 use tokio::io::{stdin, stdout};
 
-use crate::tool::{
-    WosGibtsnHeidService,
-    loc::LOCATIONS_STRING,
-    menu_data::{ALLERGENS_STRING, INDICATORS_STRING, INGREDIENTS_STRING},
-};
+use crate::{abbreviations::all::*, tool::WosGibtsnHeidService};
 use preferences::Preferences;
 
+mod abbreviations;
 mod preferences;
 mod tool;
 
@@ -17,23 +14,14 @@ pub mod constants {
 }
 
 fn process_preferences_args(preferences: &Preferences) -> bool {
-    if preferences.list_allergens {
-        println!("{}", ALLERGENS_STRING.as_str());
-        return true;
-    }
-
-    if preferences.list_ingredients {
-        println!("{}", INGREDIENTS_STRING.as_str());
-        return true;
-    }
-
-    if preferences.list_indicators {
-        println!("{}", INDICATORS_STRING.as_str());
-        return true;
-    }
-
-    if preferences.list_locations {
-        println!("{}", LOCATIONS_STRING.as_str());
+    if let Some(list) = preferences.list.clone() {
+        match list.to_lowercase().as_str() {
+            "allergens" => println!("{}", Allergen::describe_all("Allergens:")),
+            "ingredients" => println!("{}", Ingredient::describe_all("Ingredients:")),
+            "indicators" => println!("{}", Indicator::describe_all("Indicators:")),
+            "locations" => println!("{}", Location::describe_all("Locations:")),
+            _ => {}
+        }
         return true;
     }
 
