@@ -4,7 +4,7 @@
 
 ![Screenshot der Abfrage des Mensaspeiseplans mit dem Tool zeigt](resources/demo.png)
 
-Ein Claude MCP (Model Context Protocol) Tool, das einfachen Zugriff auf die Mensaspeisepläne des [Studierendenwerks Niederbayern/Ostbayern](https:://www.stwno.de) ermöglicht:
+Ein Claude MCP (Model Context Protocol) Tool, das einfachen Zugriff auf die Mensaspeisepläne des [Studierendenwerks Niederbayern/Ostbayern](https://www.stwno.de) ermöglicht:
 
 - unterstützt alle Mensen und Cafeterien des StWNOs
 - Anzeigen von Speiseplänen für die aktuelle Woche, kommende Wochen oder eine beliebige Kalenderwoche
