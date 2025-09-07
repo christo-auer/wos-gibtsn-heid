@@ -1,6 +1,6 @@
 ![Logo von Wos Gibstn Heid](resources/logo-scaled.png)
 
-# mcp-wos-gibtsn-heid
+# Wos gibt'sn heid? MCP Server
 
 ![Screenshot der Abfrage des Mensaspeiseplans mit dem Tool zeigt](resources/demo.png)
 
@@ -59,6 +59,7 @@ Laden Sie dass passende Paket für Ihr Betriebssystem herunter: [GitHub-Releases
     }
 
 }
+```
 
 ### Andere Clients
 
@@ -86,18 +87,18 @@ mcp-wos-gibtsn-heid [OPTIONEN]
 
 #### Optionen:
 
-| Option | Beschreibung | Mögliche Werte |
-|--------|-------------|----------------|
-| `--location <LOCATION>` | Standardort, für den der Speiseplan abgerufen werden soll | Siehe [Standorte](#standorte) |
-| `--avoid-allergens <LIST-OF-ALLERGENES>` | Durch Kommas getrennte Liste von zu vermeidenden Allergenen | Beispiel: `AA,E,L` (Siehe [Allergene](#allergene)) |
-| `--avoid-ingredients <LIST-OF-INGREDIENTS>` | Durch Kommas getrennte Liste von zu vermeidenden Inhaltsstoffen | Beispiel: `1,4,2` (Siehe [Inhaltsstoffe](#inhaltsstoffe)) |
-| `--preferred-indicators <LIST-OF-INDICATORS>` | Durch Kommas getrennte Liste bevorzugter Kennzeichnungen | Beispiel: `V,VG` (Siehe [Kennzeichnungen](#kennzeichnungen)) |
-| `--list locations` | Verfügbare Standorte auflisten | |
-| `--list allergens` | Verfügbare Allergene auflisten | |
-| `--list ingredients` | Verfügbare Inhaltsstoffe auflisten | |
-| `--list indicators` | Verfügbare Kennzeichnungen auflisten | |
-| `--help` | Hilfe anzeigen | |
-| `--version` | Version anzeigen | |
+| Option                                        | Beschreibung                                                    | Mögliche Werte                                               |
+|--------                                       |-------------                                                    |----------------                                              |
+| `--location <LOCATION>`                       | Standardort, für den der Speiseplan abgerufen werden soll       | Siehe [Standorte](#standorte)                                |
+| `--avoid-allergens <LIST-OF-ALLERGENES>`      | Durch Kommas getrennte Liste von zu vermeidenden Allergenen     | Beispiel: `AA,E,L` (Siehe [Allergene](#allergene))           |
+| `--avoid-ingredients <LIST-OF-INGREDIENTS>`   | Durch Kommas getrennte Liste von zu vermeidenden Inhaltsstoffen | Beispiel: `1,4,2` (Siehe [Inhaltsstoffe](#inhaltsstoffe))    |
+| `--preferred-indicators <LIST-OF-INDICATORS>` | Durch Kommas getrennte Liste bevorzugter Kennzeichnungen        | Beispiel: `V,VG` (Siehe [Kennzeichnungen](#kennzeichnungen)) |
+| `--list locations`                            | Verfügbare Standorte auflisten                                  |                                                              |
+| `--list allergens`                            | Verfügbare Allergene auflisten                                  |                                                              |
+| `--list ingredients`                          | Verfügbare Inhaltsstoffe auflisten                              |                                                              |
+| `--list indicators`                           | Verfügbare Kennzeichnungen auflisten                            |                                                              |
+| `--help`                                      | Hilfe anzeigen                                                  |                                                              |
+| `--version`                                   | Version anzeigen                                                |                                                              |
 
 #### Beispiel:
 
