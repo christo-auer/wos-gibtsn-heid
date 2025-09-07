@@ -71,28 +71,28 @@
       "title": "Standort",
       "description": "Kürzel des Standorts, der abgefragt werden soll. https://github.com/christo-auer/wos-gibtsn-heid#standorte",
       "required": false,
-      "default": " "
+      "default": ""
     },
     "avoid_allergens": {
       "type": "string",
       "title": "Zu vermeidende Allergene",
       "description": "Allergene, die vermieden werden sollen oder von denen gewarnt werden soll (jeweils durch Kommata getrennt, z.B., AA,D,HC). https://github.com/christo-auer/wos-gibtsn-heid#allergene",
       "required": false,
-      "default": " "
+      "default": ""
     },
     "avoid_ingredients": {
       "type": "string",
       "title": "Zu vermeidende Inhaltsstoffe",
       "description": "Inhaltsstoffe, die vermieden werden sollen oder von denen gewarnt werden soll (jeweils durch Kommata getrennt, z.B., 0,3,1). https://github.com/christo-auer/wos-gibtsn-heid#inhaltsstoffe",
       "required": false,
-      "default": " "
+      "default": ""
     },
     "preferred_indicators": {
       "type": "string",
       "title": "Bevorzugte Kennzeichnungen",
       "description": "Bevorzugte Kennzeichnungen (jeweils durch Kommata getrennt, z.B., V,VG). https://github.com/christo-auer/wos-gibtsn-heid#kennzeichnungen",
       "required": false,
-      "default": " "
+      "default": ""
     }
   }
 }
