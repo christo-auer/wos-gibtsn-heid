@@ -59,6 +59,10 @@ pub enum Ingredient {
     #[schemars(description = "The user defined an UNKNOWN ingredient")]
     #[strum(disabled)]
     Unknown(String),
+
+    #[serde(rename = "${user_config.avoid_ingredients}")]
+    #[strum(disabled)]
+    ClaudeWorkaroundForEmptyParameter,
 }
 
 impl AsUnknown for Ingredient {
@@ -95,6 +99,7 @@ impl Abbrevivation for Ingredient {
             N14 => "coffeinhaltig",
             N15 => "enthält Sulfite",
             N16 => "enthält Phenylalanin",
+            ClaudeWorkaroundForEmptyParameter => "just IGNORE this value",
             Unknown(_) => "unknown ingredient",
         }
         .to_string()

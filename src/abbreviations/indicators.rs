@@ -29,6 +29,10 @@ pub enum Indicator {
     #[schemars(description = "The user defined an UNKNOWN indicator")]
     #[strum(disabled)]
     Unknown(String),
+
+    #[serde(rename = "${user_config.preferred_indicators}")]
+    #[strum(disabled)]
+    ClaudeWorkaroundForEmptyParameter,
 }
 
 impl AsUnknown for Indicator {
@@ -58,6 +62,7 @@ impl Abbrevivation for Indicator {
             A => "Alkohol",
             B => "bio",
             PHD => "Klimateller (planetary health diet)",
+            ClaudeWorkaroundForEmptyParameter => "just IGNORE this value",
             Unknown(_) => "unknown indicator",
         }
         .to_string()

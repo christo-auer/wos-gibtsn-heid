@@ -68,6 +68,10 @@ pub enum Allergen {
     #[schemars(description = "The user defined an UNKNOWN allergen")]
     #[strum(disabled)]
     Unknown(String),
+
+    #[serde(rename = "${user_config.avoid_allergens}")]
+    #[strum(disabled)]
+    ClaudeWorkaroundForEmptyParameter,
 }
 
 impl AsUnknown for Allergen {
@@ -117,6 +121,7 @@ impl Abbrevivation for Allergen {
             N => "Weichtiere",
             O => "Nitrat",
             P => "Nitritpökelsalz",
+            ClaudeWorkaroundForEmptyParameter => "just IGNORE this value",
             Unknown(_) => "unknown allergen",
         }
         .to_string()

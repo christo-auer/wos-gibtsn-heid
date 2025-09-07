@@ -83,6 +83,12 @@ impl WosGibtsnHeidService {
             )]));
         };
 
+        if location == Location::ClaudeWorkaroundForEmptyParameter {
+            return Ok(CallToolResult::error(vec![Content::text(
+                "no location is given. ask the user which location should be queried",
+            )]));
+        }
+
         let location_id = location_to_id(&location);
 
         let week = calendar_week.unwrap_or(self.get_calendar_week(None));

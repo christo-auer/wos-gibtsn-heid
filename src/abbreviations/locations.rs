@@ -80,6 +80,10 @@ pub enum Location {
     #[schemars(description = "The user defined an unknown location ")]
     #[strum(disabled)]
     Unknown(String),
+
+    #[serde(rename = "${user_config.location}")]
+    #[strum(disabled)]
+    ClaudeWorkaroundForEmptyParameter,
 }
 
 impl FromStr for Location {
@@ -124,6 +128,7 @@ impl Abbrevivation for Location {
             TcCham => "TH Deggendorf-Cham".to_string(),
             EcPfarrkirchen => "European Campus Pfarrkirchen".to_string(),
             TumStraubing => "TUM Campus Straubing".to_string(),
+            ClaudeWorkaroundForEmptyParameter => "just IGNORE this value".to_string(),
             Unknown(unknown) => format!("unknown location: {}", unknown).to_string(),
         }
     }
