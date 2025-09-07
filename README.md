@@ -36,7 +36,7 @@ Das MCPB-Paket enthält alle plattformspezifischen Binärdateien und eine benutz
 
 ### Claude Desktop: JSON-Konfiguration
 
-Laden Sie dass passende Paket für Ihr Betriebssystem herunter: [GitHub-Releases-Seite](https://github.com/christo-auer/mcp-wos-gibtsn-heid/releases)  und verwenden Sie folgende Ausschnitt um Claude Desktop zu konfigurieren
+Laden Sie dass passende Paket für Ihr Betriebssystem herunter ([GitHub-Releases-Seite](https://github.com/christo-auer/mcp-wos-gibtsn-heid/releases))  und verwenden Sie folgende Ausschnitt um Claude Desktop zu konfigurieren
 
 ```json
 
