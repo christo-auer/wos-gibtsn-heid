@@ -2,7 +2,6 @@ use rmcp::handler::server::tool::ToolRouter;
 
 use crate::preferences::Preferences;
 
-pub mod loc;
 pub mod menu_data;
 mod router;
 

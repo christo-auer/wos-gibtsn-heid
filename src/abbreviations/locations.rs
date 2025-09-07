@@ -1,18 +1,12 @@
-use clap::ValueEnum;
-use once_cell::sync::Lazy;
+use std::{convert::Infallible, str::FromStr};
+
 use rmcp::schemars;
-use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
+use crate::abbreviations::{Abbrevivation, AsUnknown, ParseWithUnknown};
+
 #[derive(
-    Copy,
-    Clone,
-    PartialEq,
-    serde::Serialize,
-    serde::Deserialize,
-    schemars::JsonSchema,
-    ValueEnum,
-    EnumIter,
+    Clone, PartialEq, serde::Serialize, serde::Deserialize, schemars::JsonSchema, EnumIter,
 )]
 pub enum Location {
     #[schemars(description = "Hochschule Landshut Mensa")]
@@ -82,6 +76,18 @@ pub enum Location {
     #[schemars(description = "TUM Campus Straubing")]
     #[serde(rename = "HS-SR")]
     TumStraubing,
+
+    #[schemars(description = "The user defined an unknown location ")]
+    #[strum(disabled)]
+    Unknown(String),
+}
+
+impl FromStr for Location {
+    type Err = Infallible;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(Self::parse_with_unknown(s))
+    }
 }
 
 pub fn location_to_id(location: &Location) -> String {
@@ -91,39 +97,34 @@ pub fn location_to_id(location: &Location) -> String {
         .to_string()
 }
 
-fn location_to_description(location: &Location) -> String {
-    use Location::*;
-    match location {
-        HSLaMensa => "Hochschule Landshut Mensa",
-        HSLaCafeteria => "Hochschule Landshut Cafeteria",
-        UniRMensa => "Universität Regensburg Mensa",
-        UniRGaestesaal => "Universität Regensburg Mensa - Gästesaal",
-        UniRCafeteriaPT => "Universität Regensburg Cafeteria PT",
-        UniRCafeteriaChemie => "Universität Regensburg Cafeteria Chemie",
-        UniRCafeteriaSammel => "Universität Regensburg Cafeteria Sammelgebäude",
-        UniRCafeteriaSport => "Universität Regensburg Cafeteria Sport",
-        OthRMensa => "OTH Regensburg Mensa Seybothstraße (Mittags)",
-        OthRMensaAbend => "OTH Regensburg Mensa Seybothstraße (Abends)",
-        OthRMensaPruefening => "OTH Regensburg Mensa Prüfeningerstraße (Mittags)",
-        UniPMensa => "Universität Passau Mensa",
-        UniPCafeteriaNikolakloster => "Universität Passau Cafeteria Nikolakloster",
-        ThDegMensa => "TH Deggendorf Mensa",
-        TcCham => "TH Deggendorf-Cham",
-        EcPfarrkirchen => "European Campus Pfarrkirchen",
-        TumStraubing => "TUM Campus Straubing",
+impl AsUnknown for Location {
+    fn unknown(s: String) -> Self {
+        Self::Unknown(s)
     }
-    .to_string()
 }
 
-pub static LOCATIONS_STRING: Lazy<String> = Lazy::new(|| {
-    Location::iter()
-        .map(|loc| {
-            format!(
-                "{}: {}",
-                location_to_id(&loc),
-                location_to_description(&loc)
-            )
-        })
-        .reduce(|accum, next| format!("{accum}\n{next}"))
-        .unwrap()
-});
+impl Abbrevivation for Location {
+    fn describe(&self) -> String {
+        use Location::*;
+        match self {
+            HSLaMensa => "Hochschule Landshut Mensa".to_string(),
+            HSLaCafeteria => "Hochschule Landshut Cafeteria".to_string(),
+            UniRMensa => "Universität Regensburg Mensa".to_string(),
+            UniRGaestesaal => "Universität Regensburg Mensa - Gästesaal".to_string(),
+            UniRCafeteriaPT => "Universität Regensburg Cafeteria PT".to_string(),
+            UniRCafeteriaChemie => "Universität Regensburg Cafeteria Chemie".to_string(),
+            UniRCafeteriaSammel => "Universität Regensburg Cafeteria Sammelgebäude".to_string(),
+            UniRCafeteriaSport => "Universität Regensburg Cafeteria Sport".to_string(),
+            OthRMensa => "OTH Regensburg Mensa Seybothstraße (Mittags)".to_string(),
+            OthRMensaAbend => "OTH Regensburg Mensa Seybothstraße (Abends)".to_string(),
+            OthRMensaPruefening => "OTH Regensburg Mensa Prüfeningerstraße (Mittags)".to_string(),
+            UniPMensa => "Universität Passau Mensa".to_string(),
+            UniPCafeteriaNikolakloster => "Universität Passau Cafeteria Nikolakloster".to_string(),
+            ThDegMensa => "TH Deggendorf Mensa".to_string(),
+            TcCham => "TH Deggendorf-Cham".to_string(),
+            EcPfarrkirchen => "European Campus Pfarrkirchen".to_string(),
+            TumStraubing => "TUM Campus Straubing".to_string(),
+            Unknown(unknown) => format!("unknown location: {}", unknown).to_string(),
+        }
+    }
+}
