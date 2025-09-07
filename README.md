@@ -27,7 +27,7 @@ Der Name *wos gibts'n heid* ist bayerischer Dialekt für "Was gibt es heute?".
 
 Dieses Tool ist als MCPB (MCP Bundle) Paket verfügbar:
 
-1. Laden Sie das neueste `.mcpb` Paket von der [GitHub-Releases-Seite](https://github.com/christo-auer/mcp-wos-gibtsn-heid/releases) herunter
+1. Laden Sie das neueste `.mcpb` Paket von der [GitHub-Releases-Seite](https://github.com/christo-auer/wos-gibtsn-heid/releases) herunter
 2. In Claude Desktop: *Einstellungen*, *Erweiterungen*, *Erweiterte Einstellungen*, *Erweiterung installieren*, MCPB-Bundle auswählen, *Installieren* und bestätigen
 3. *Konfigurieren* und Dialog schließen: Die Konfigurationsoptionen sind unten aufgelistet. Speichern nicht vergessen
 4. Das Tool ist danach einsatzbereit. 
@@ -36,7 +36,7 @@ Das MCPB-Paket enthält alle plattformspezifischen Binärdateien und eine benutz
 
 ### Claude Desktop: JSON-Konfiguration
 
-Laden Sie dass passende Paket für Ihr Betriebssystem herunter ([GitHub-Releases-Seite](https://github.com/christo-auer/mcp-wos-gibtsn-heid/releases))  und verwenden Sie folgende Ausschnitt um Claude Desktop zu konfigurieren
+Laden Sie dass passende Paket für Ihr Betriebssystem herunter ([GitHub-Releases-Seite](https://github.com/christo-auer/wos-gibtsn-heid/releases))  und verwenden Sie folgende Ausschnitt um Claude Desktop zu konfigurieren
 
 ```json
 
