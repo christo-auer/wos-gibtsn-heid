@@ -69,7 +69,6 @@ pub enum Allergen {
     #[strum(disabled)]
     Unknown(String),
 
-    #[serde(rename = "${user_config.avoid_allergens}")]
     #[strum(disabled)]
     ClaudeWorkaroundForEmptyParameter,
 }
@@ -84,6 +83,9 @@ impl FromStr for Allergen {
     type Err = Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.eq("${user_config.avoid_allergens}") {
+            return Ok(Allergen::ClaudeWorkaroundForEmptyParameter);
+        }
         Ok(Self::parse_with_unknown(s))
     }
 }

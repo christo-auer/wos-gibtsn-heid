@@ -60,7 +60,6 @@ pub enum Ingredient {
     #[strum(disabled)]
     Unknown(String),
 
-    #[serde(rename = "${user_config.avoid_ingredients}")]
     #[strum(disabled)]
     ClaudeWorkaroundForEmptyParameter,
 }
@@ -75,6 +74,9 @@ impl FromStr for Ingredient {
     type Err = Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.eq("${user_config.avoid_ingredients}") {
+            return Ok(Ingredient::ClaudeWorkaroundForEmptyParameter);
+        }
         Ok(Self::parse_with_unknown(s))
     }
 }

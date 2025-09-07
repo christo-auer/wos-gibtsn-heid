@@ -30,7 +30,6 @@ pub enum Indicator {
     #[strum(disabled)]
     Unknown(String),
 
-    #[serde(rename = "${user_config.preferred_indicators}")]
     #[strum(disabled)]
     ClaudeWorkaroundForEmptyParameter,
 }
@@ -45,6 +44,9 @@ impl FromStr for Indicator {
     type Err = Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.eq("${user_config.preferred_indicators}") {
+            return Ok(Indicator::ClaudeWorkaroundForEmptyParameter);
+        }
         Ok(Self::parse_with_unknown(s))
     }
 }

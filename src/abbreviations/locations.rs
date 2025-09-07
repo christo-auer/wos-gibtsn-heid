@@ -81,7 +81,6 @@ pub enum Location {
     #[strum(disabled)]
     Unknown(String),
 
-    #[serde(rename = "${user_config.location}")]
     #[strum(disabled)]
     ClaudeWorkaroundForEmptyParameter,
 }
@@ -90,6 +89,9 @@ impl FromStr for Location {
     type Err = Infallible;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.eq("${user_config.location}") {
+            return Ok(Location::ClaudeWorkaroundForEmptyParameter);
+        }
         Ok(Self::parse_with_unknown(s))
     }
 }
